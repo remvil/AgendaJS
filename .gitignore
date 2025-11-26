@@ -1,0 +1,39 @@
+# Node modules (per-project)
+/backend/node_modules/
+/frontend/node_modules/
+
+# Build outputs
+/backend/dist/
+/frontend/dist/
+/backend/build/
+/frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime env files
+.env
+.env.local
+.env.*.local
+/backend/.env
+/frontend/.env
+
+# Coverage
+/backend/coverage/
+/frontend/coverage/
+
+# OS / editor files
+.DS_Store
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Misc
+.cache/
+.next/
+.parcel-cache/
+.turbo/

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Header, EventList, EventModal, ConfirmModal } from './components';
+import { Header, EventList, EventModal, ConfirmModal, FilterBar } from './components';
 
 const API_URL = '/api/events';
 
@@ -15,6 +15,7 @@ const emptyEvent = {
 
 function App() {
 	const [events, setEvents] = useState([]);
+	const [filters, setFilters] = useState({ startDate: '', endDate: '', type: 'all' });
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [isEditing, setIsEditing] = useState(false);
@@ -135,12 +136,34 @@ function App() {
 		);
 	}
 
+	const filteredEvents = events.filter((e) => {
+		if (filters.type && filters.type !== 'all' && e.type !== filters.type) return false;
+
+		if (filters.startDate) {
+			const sd = new Date(filters.startDate);
+			const edate = e.date ? new Date(e.date) : null;
+			if (!edate) return false;
+			if (edate < sd) return false;
+		}
+
+		if (filters.endDate) {
+			const ed = new Date(filters.endDate);
+			ed.setHours(23, 59, 59, 999);
+			const edate = e.date ? new Date(e.date) : null;
+			if (!edate) return false;
+			if (edate > ed) return false;
+		}
+
+		return true;
+	});
+
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
 			<div className="max-w-4xl mx-auto">
 				<Header onNewEvent={openNewEventDialog} />
+				<FilterBar filters={filters} onChange={setFilters} />
 				<EventList
-					events={events}
+					events={filteredEvents}
 					onEdit={openEditDialog}
 					onDelete={deleteEvent}
 					onRequestDelete={requestDelete}

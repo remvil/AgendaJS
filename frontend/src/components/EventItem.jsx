@@ -15,7 +15,7 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 							}`}
 					>
 						{event.type === 'meeting' ? (
-							<Calendar className="text-blue-600" size={24} />
+							<Calendar className="text-orange-600" size={24} />
 						) : (
 							<Terminal className="text-green-600" size={24} />
 						)}
@@ -34,7 +34,7 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 							<span
 								className={`px-2 py-0.5 rounded-full text-xs ${event.type === 'meeting'
 									? 'bg-orange-200 text-orange-700'
-									: 'bg-purple-200 text-purple-700'
+									: 'bg-purple-200 text-green-700'
 									}`}
 							>
 								{event.type === 'meeting' ? 'Evento' : 'Colloquio'}

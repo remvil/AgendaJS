@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Edit2, Trash2 } from 'lucide-react';
+import { Calendar, Terminal, Edit2, Trash2, Clock } from 'lucide-react';
 
 export function EventItem({ event, onEdit, onRequestDelete }) {
 	const handleRequestDelete = () => {
@@ -11,13 +11,13 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4 flex-1">
 					<div
-						className={`p-3 rounded-lg ${event.type === 'meeting' ? 'bg-blue-100' : 'bg-green-100'
+						className={`p-3 rounded-lg ${event.type === 'meeting' ? 'bg-orange-200' : 'bg-purple-200'
 							}`}
 					>
 						{event.type === 'meeting' ? (
 							<Calendar className="text-blue-600" size={24} />
 						) : (
-							<Clock className="text-green-600" size={24} />
+							<Terminal className="text-green-600" size={24} />
 						)}
 					</div>
 					<div className="flex-1">
@@ -33,8 +33,8 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 							</span>
 							<span
 								className={`px-2 py-0.5 rounded-full text-xs ${event.type === 'meeting'
-									? 'bg-blue-100 text-blue-700'
-									: 'bg-green-100 text-green-700'
+									? 'bg-orange-200 text-orange-700'
+									: 'bg-purple-200 text-purple-700'
 									}`}
 							>
 								{event.type === 'meeting' ? 'Evento' : 'Colloquio'}

@@ -51,3 +51,31 @@ Make sure you have installed:
 
 ```sh
 docker-compose up --build
+```
+
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
+- MongoDB: localhost:27017
+
+---
+
+## 📚 API Documentation
+
+The backend exposes interactive API documentation via **Swagger/OpenAPI**:
+
+- **Swagger UI**: http://localhost:3001/api/docs
+- **OpenAPI JSON**: http://localhost:3001/api/docs-json
+
+### Development
+
+When running the backend in development mode, you can view and test all available endpoints directly in the browser:
+
+```sh
+cd backend
+npm run start:dev
+```
+
+Then visit **http://localhost:3001/api/docs** to explore and test the REST API endpoints.
+
+---

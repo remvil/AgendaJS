@@ -113,6 +113,21 @@ export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
 									placeholder="Es: Maria Bianchi"
 								/>
 							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									Nome Azienda
+								</label>
+								<input
+									type="text"
+									value={event.companyName || ''}
+									onChange={(e) =>
+										onSave({ ...event, companyName: e.target.value }, false)
+									}
+									className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+									placeholder="Es: Company ltd"
+								/>
+							</div>
 						</>
 					)}
 

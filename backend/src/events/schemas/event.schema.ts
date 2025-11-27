@@ -22,6 +22,9 @@ export class Event extends Document {
 	recruiterName: string;
 
 	@Prop({default: ""})
+	companyName: string;
+
+	@Prop({default: ""})
 	notes: string;
 }
 

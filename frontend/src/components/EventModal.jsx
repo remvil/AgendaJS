@@ -1,9 +1,11 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Info } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
+	const [showMarkdownTooltip, setShowMarkdownTooltip] = useState(false);
+
 	if (!isOpen) return null;
 
 	return (
@@ -115,28 +117,54 @@ export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
 									placeholder="Es: Maria Bianchi"
 								/>
 							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
-									Nome Azienda
-								</label>
-								<input
-									type="text"
-									value={event.companyName || ''}
-									onChange={(e) =>
-										onSave({ ...event, companyName: e.target.value }, false)
-									}
-									className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									placeholder="Es: Company ltd"
-								/>
-							</div>
 						</>
 					)}
 
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-2">
-							Note (Markdown)
+							Nome Azienda
 						</label>
+						<input
+							type="text"
+							value={event.companyName || ''}
+							onChange={(e) =>
+								onSave({ ...event, companyName: e.target.value }, false)
+							}
+							className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+							placeholder="Es: Company ltd"
+						/>
+					</div>
+
+					<div>
+						<div className="flex items-center gap-2 mb-2 relative">
+							<label className="block text-sm font-medium text-gray-700">
+								Note (Markdown)
+							</label>
+							<div className="relative">
+								<button
+									type="button"
+									onMouseEnter={() => setShowMarkdownTooltip(true)}
+									onMouseLeave={() => setShowMarkdownTooltip(false)}
+									className="text-gray-400 hover:text-gray-600 p-0.5 transition-colors"
+									title="Informazioni Markdown"
+								>
+									<Info size={16} />
+								</button>
+
+								{/* Floating Tooltip */}
+								{showMarkdownTooltip && (
+									<div className="absolute top-6 left-0 bg-gray-800 text-white text-sm rounded-lg shadow-lg p-3 w-max z-50">
+										<p className="font-semibold mb-2">Sintassi Markdown:</p>
+										<ul className="space-y-1 text-xs">
+											<li><code className="bg-gray-700 px-1.5 py-0.5 rounded">**testo**</code> = <strong>bold</strong></li>
+											<li><code className="bg-gray-700 px-1.5 py-0.5 rounded">*testo*</code> = <em>italic</em></li>
+											<li><code className="bg-gray-700 px-1.5 py-0.5 rounded">- elemento</code> = lista</li>
+											<li><code className="bg-gray-700 px-1.5 py-0.5 rounded"># Titolo</code> = titolo</li>
+										</ul>
+									</div>
+								)}
+							</div>
+						</div>
 						<div className="space-y-2">
 							<textarea
 								value={event.notes || ''}
@@ -145,14 +173,6 @@ export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
 								placeholder="Supporta Markdown: **bold** *italic* - lista"
 								rows="4"
 							/>
-							<div className="text-xs text-gray-500 bg-gray-50 p-3 rounded border border-gray-200">
-								<p className="font-semibold mb-1">Markdown:</p>
-								<ul className="space-y-1">
-									<li><code className="bg-white px-1 rounded">**testo**</code> = <strong>bold</strong></li>
-									<li><code className="bg-white px-1 rounded">*testo*</code> = <em>italic</em></li>
-									<li><code className="bg-white px-1 rounded">- elemento</code> = lista</li>
-								</ul>
-							</div>
 							{event.notes && (
 								<div className="bg-gray-50 p-3 rounded border border-gray-200">
 									<p className="text-xs font-semibold text-gray-600 mb-2">Anteprima:</p>

@@ -19,6 +19,6 @@ async function bootstrap() {
 	app.use("/api/docs-json", (_req, res) => res.json(document));
 
 	await app.listen(process.env.PORT || 3001);
-	console.log("🚀 Backend running on port 3001");
+	console.log(`🚀 Backend running on port ${process.env.PORT || 3001}`);
 }
 bootstrap();

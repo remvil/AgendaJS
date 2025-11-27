@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Header, EventList, EventModal, ConfirmModal, FilterBar } from './components';
 
-const API_URL = '/api/events';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = `${API_BASE}/events`;
 
 const emptyEvent = {
 	title: '',
@@ -15,7 +16,8 @@ const emptyEvent = {
 
 function App() {
 	const [events, setEvents] = useState([]);
-	const [filters, setFilters] = useState({ startDate: '', endDate: '', type: 'all' });
+	const [companies, setCompanies] = useState([]);
+	const [filters, setFilters] = useState({ startDate: '', endDate: '', type: 'all', company: '' });
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(true);
@@ -32,6 +34,7 @@ function App() {
 		if (filters.startDate) params.append('startDate', filters.startDate);
 		if (filters.endDate) params.append('endDate', filters.endDate);
 		if (filters.type && filters.type !== 'all') params.append('type', filters.type);
+		if (filters.company) params.append('company', filters.company);
 		params.append('page', pageNum);
 		params.append('limit', 10);
 		return params.toString();
@@ -76,7 +79,19 @@ function App() {
 	// Initial load
 	useEffect(() => {
 		fetchEvents(1, true);
+		fetchCompanies();
 	}, []);
+
+	// Fetch distinct companies
+	const fetchCompanies = async () => {
+		try {
+			const res = await fetch(`${API_BASE}/companies/distinct`);
+			const data = await res.json();
+			setCompanies(data);
+		} catch (error) {
+			console.error('Errore nel caricamento aziende:', error);
+		}
+	};
 
 	// Load next page
 	const loadMore = async () => {
@@ -188,7 +203,7 @@ function App() {
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
 			<div className="max-w-4xl mx-auto">
 				<Header onNewEvent={openNewEventDialog} />
-				<FilterBar filters={filters} onChange={setFilters} />
+				<FilterBar filters={filters} onChange={setFilters} companies={companies} />
 				<EventList
 					events={events}
 					onEdit={openEditDialog}

@@ -23,7 +23,7 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 					{isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
 				</button>
 
-				<div className="flex items-center gap-4 flex-1">
+				<div className="flex items-center gap-4 flex-1 min-w-0">
 					<div
 						className={`p-3 rounded-lg flex-shrink-0 ${event.type === 'meeting' ? 'bg-orange-200' : 'bg-purple-200'
 							}`}
@@ -37,7 +37,7 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 
 					<div className="flex-1 min-w-0">
 						<h3 className="font-semibold text-lg text-gray-800 truncate">{event.title}</h3>
-						<div className="flex gap-4 text-sm text-gray-500 mt-1 flex-wrap">
+						<div className="flex gap-4 text-sm text-gray-500 leading-tight flex-wrap">
 							<span className="flex items-center gap-1 whitespace-nowrap">
 								<Calendar size={14} />
 								{new Date(event.date).toLocaleDateString('it-IT')}
@@ -48,13 +48,32 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 							</span>
 							<span
 								className={`px-2 py-0.5 rounded-full text-xs whitespace-nowrap ${event.type === 'meeting'
-										? 'bg-orange-200 text-orange-700'
-										: 'bg-purple-200 text-green-700'
+									? 'bg-orange-200 text-orange-700'
+									: 'bg-purple-200 text-green-700'
 									}`}
 							>
 								{event.type === 'meeting' ? 'Evento' : 'Colloquio'}
 							</span>
 						</div>
+						{(event.type === 'interview' && event.stakeholder) || event.recruiterName || event.companyName ? (
+							<div className="flex gap-3 text-xs text-gray-600 mt-1 leading-tight flex-wrap">
+								{event.type === 'interview' && event.stakeholder && (
+									<span className="whitespace-nowrap">
+										<strong>Partecipante:</strong> {event.stakeholder}
+									</span>
+								)}
+								{event.recruiterName && (
+									<span className="whitespace-nowrap">
+										<strong>Recruiter:</strong> {event.recruiterName}
+									</span>
+								)}
+								{event.companyName && (
+									<span className="whitespace-nowrap">
+										<strong>Azienda:</strong> {event.companyName}
+									</span>
+								)}
+							</div>
+						) : null}
 					</div>
 				</div>
 
@@ -79,30 +98,6 @@ export function EventItem({ event, onEdit, onRequestDelete }) {
 			{/* Expanded Details */}
 			{isExpanded && (
 				<div className="border-t border-gray-200 px-5 py-4 bg-gray-50 space-y-4">
-					{/* Interview-specific info */}
-					{event.type === 'interview' && (
-						<div className="space-y-2">
-							{event.stakeholder && (
-								<div>
-									<p className="text-sm font-semibold text-gray-700">Partecipante</p>
-									<p className="text-sm text-gray-600">{event.stakeholder}</p>
-								</div>
-							)}
-							{event.recruiterName && (
-								<div>
-									<p className="text-sm font-semibold text-gray-700">Recruiter</p>
-									<p className="text-sm text-gray-600">{event.recruiterName}</p>
-								</div>
-							)}
-							{event.companyName && (
-								<div>
-									<p className="text-sm font-semibold text-gray-700">Azienda</p>
-									<p className="text-sm text-gray-600">{event.companyName}</p>
-								</div>
-							)}
-						</div>
-					)}
-
 					{/* Notes */}
 					{event.notes && (
 						<div className="bg-white p-4 rounded-lg border border-gray-200">

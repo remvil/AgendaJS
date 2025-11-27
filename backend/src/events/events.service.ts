@@ -7,6 +7,7 @@ interface FindAllOptions {
 	startDate?: string;
 	endDate?: string;
 	type?: string;
+	company?: string;
 	page?: number;
 	limit?: number;
 }
@@ -24,7 +25,7 @@ export class EventsService {
 	constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
 
 	async findAll(options: FindAllOptions = {}): Promise<FindAllResult> {
-		const {startDate, endDate, type, page = 1, limit = 10} = options;
+		const {startDate, endDate, type, company, page = 1, limit = 10} = options;
 		const query: any = {};
 
 		// Build filter query
@@ -36,6 +37,10 @@ export class EventsService {
 
 		if (type && type !== "all") {
 			query.type = type;
+		}
+
+		if (company && company.trim() !== "") {
+			query.companyName = company;
 		}
 
 		const skip = (page - 1) * limit;

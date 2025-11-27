@@ -1,19 +1,28 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
+import {Document} from "mongoose";
 
-@Schema({ timestamps: true })
+@Schema({timestamps: true})
 export class Event extends Document {
-  @Prop({ required: true })
-  title: string;
+	@Prop({required: true})
+	title: string;
 
-  @Prop({ required: true })
-  date: string;
+	@Prop({required: true})
+	date: string;
 
-  @Prop({ required: true })
-  time: string;
+	@Prop({required: true})
+	time: string;
 
-  @Prop({ required: true, enum: ['meeting', 'interview'] })
-  type: string;
+	@Prop({required: true, enum: ["meeting", "interview"]})
+	type: string;
+
+	@Prop({default: ""})
+	stakeholder: string;
+
+	@Prop({default: ""})
+	recruiterName: string;
+
+	@Prop({default: ""})
+	notes: string;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

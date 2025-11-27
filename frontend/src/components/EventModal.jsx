@@ -1,5 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
 	if (!isOpen) return null;
@@ -133,15 +135,35 @@ export function EventModal({ isOpen, isEditing, event, onClose, onSave }) {
 
 					<div>
 						<label className="block text-sm font-medium text-gray-700 mb-2">
-							Note
+							Note (Markdown)
 						</label>
-						<textarea
-							value={event.notes || ''}
-							onChange={(e) => onSave({ ...event, notes: e.target.value }, false)}
-							className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-							placeholder="Aggiungi note importanti..."
-							rows="3"
-						/>
+						<div className="space-y-2">
+							<textarea
+								value={event.notes || ''}
+								onChange={(e) => onSave({ ...event, notes: e.target.value }, false)}
+								className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none font-mono text-sm"
+								placeholder="Supporta Markdown: **bold** *italic* - lista"
+								rows="4"
+							/>
+							<div className="text-xs text-gray-500 bg-gray-50 p-3 rounded border border-gray-200">
+								<p className="font-semibold mb-1">Markdown:</p>
+								<ul className="space-y-1">
+									<li><code className="bg-white px-1 rounded">**testo**</code> = <strong>bold</strong></li>
+									<li><code className="bg-white px-1 rounded">*testo*</code> = <em>italic</em></li>
+									<li><code className="bg-white px-1 rounded">- elemento</code> = lista</li>
+								</ul>
+							</div>
+							{event.notes && (
+								<div className="bg-gray-50 p-3 rounded border border-gray-200">
+									<p className="text-xs font-semibold text-gray-600 mb-2">Anteprima:</p>
+									<div className="prose prose-sm max-w-none">
+										<ReactMarkdown remarkPlugins={[remarkGfm]}>
+											{event.notes}
+										</ReactMarkdown>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 

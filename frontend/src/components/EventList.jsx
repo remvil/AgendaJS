@@ -1,8 +1,31 @@
-import React from 'react';
-import { Calendar } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { Calendar, Loader } from 'lucide-react';
 import { EventItem } from './EventItem';
 
-export function EventList({ events, onEdit, onDelete, onRequestDelete }) {
+export function EventList({ events, onEdit, onDelete, onRequestDelete, onLoadMore, isLoadingMore, hasMore }) {
+	const endRef = useRef(null);
+
+	useEffect(() => {
+		if (!hasMore || isLoadingMore) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					onLoadMore?.();
+				}
+			},
+			{ threshold: 0.1 }
+		);
+
+		if (endRef.current) {
+			observer.observe(endRef.current);
+		}
+
+		return () => {
+			if (endRef.current) observer.unobserve(endRef.current);
+		};
+	}, [hasMore, isLoadingMore, onLoadMore]);
+
 	if (events.length === 0) {
 		return (
 			<div className="bg-white rounded-xl shadow-md p-12 text-center">
@@ -25,6 +48,19 @@ export function EventList({ events, onEdit, onDelete, onRequestDelete }) {
 					onRequestDelete={onRequestDelete || onDelete}
 				/>
 			))}
+
+			{/* Infinite scroll trigger */}
+			<div ref={endRef} className="py-4 text-center">
+				{isLoadingMore && (
+					<div className="flex items-center justify-center gap-2 text-indigo-600">
+						<Loader size={18} className="animate-spin" />
+						<span className="text-sm">Caricamento...</span>
+					</div>
+				)}
+				{!hasMore && events.length > 0 && (
+					<p className="text-sm text-gray-500">Fine degli eventi</p>
+				)}
+			</div>
 		</div>
 	);
 }

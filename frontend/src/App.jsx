@@ -16,26 +16,72 @@ const emptyEvent = {
 function App() {
 	const [events, setEvents] = useState([]);
 	const [filters, setFilters] = useState({ startDate: '', endDate: '', type: 'all' });
-	const [showModal, setShowModal] = useState(false);
+	const [page, setPage] = useState(1);
+	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(true);
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [currentEvent, setCurrentEvent] = useState(emptyEvent);
+	const [showModal, setShowModal] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [confirmTarget, setConfirmTarget] = useState(null);
 
-	useEffect(() => {
-		fetchEvents();
-	}, []);
+	// Build query params from filters
+	const buildQueryParams = (pageNum = 1) => {
+		const params = new URLSearchParams();
+		if (filters.startDate) params.append('startDate', filters.startDate);
+		if (filters.endDate) params.append('endDate', filters.endDate);
+		if (filters.type && filters.type !== 'all') params.append('type', filters.type);
+		params.append('page', pageNum);
+		params.append('limit', 10);
+		return params.toString();
+	};
 
-	const fetchEvents = async () => {
+	// Reset to page 1 when filters change
+	useEffect(() => {
+		setPage(1);
+		setEvents([]);
+		fetchEvents(1, true);
+	}, [filters]);
+
+	// Fetch events with pagination
+	const fetchEvents = async (pageNum = 1, isReset = false) => {
 		try {
-			const res = await fetch(API_URL);
+			if (pageNum === 1) {
+				setLoading(true);
+			} else {
+				setIsLoadingMore(true);
+			}
+
+			const query = buildQueryParams(pageNum);
+			const res = await fetch(`${API_URL}?${query}`);
 			const data = await res.json();
-			setEvents(data);
+
+			if (pageNum === 1 || isReset) {
+				setEvents(data.events);
+			} else {
+				setEvents((prev) => [...prev, ...data.events]);
+			}
+
+			setHasMore(data.hasMore);
+			setPage(pageNum);
 		} catch (error) {
 			console.error('Errore nel caricamento:', error);
 		} finally {
 			setLoading(false);
+			setIsLoadingMore(false);
+		}
+	};
+
+	// Initial load
+	useEffect(() => {
+		fetchEvents(1, true);
+	}, []);
+
+	// Load next page
+	const loadMore = async () => {
+		if (!isLoadingMore && hasMore) {
+			await fetchEvents(page + 1);
 		}
 	};
 
@@ -48,7 +94,9 @@ function App() {
 					body: JSON.stringify(currentEvent),
 				});
 				const newEvent = await res.json();
-				setEvents([...events, newEvent]);
+				// Reset and refetch first page
+				setPage(1);
+				await fetchEvents(1, true);
 				resetForm();
 			} catch (error) {
 				console.error('Errore nel salvataggio:', error);
@@ -136,37 +184,19 @@ function App() {
 		);
 	}
 
-	const filteredEvents = events.filter((e) => {
-		if (filters.type && filters.type !== 'all' && e.type !== filters.type) return false;
-
-		if (filters.startDate) {
-			const sd = new Date(filters.startDate);
-			const edate = e.date ? new Date(e.date) : null;
-			if (!edate) return false;
-			if (edate < sd) return false;
-		}
-
-		if (filters.endDate) {
-			const ed = new Date(filters.endDate);
-			ed.setHours(23, 59, 59, 999);
-			const edate = e.date ? new Date(e.date) : null;
-			if (!edate) return false;
-			if (edate > ed) return false;
-		}
-
-		return true;
-	});
-
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
 			<div className="max-w-4xl mx-auto">
 				<Header onNewEvent={openNewEventDialog} />
 				<FilterBar filters={filters} onChange={setFilters} />
 				<EventList
-					events={filteredEvents}
+					events={events}
 					onEdit={openEditDialog}
 					onDelete={deleteEvent}
 					onRequestDelete={requestDelete}
+					onLoadMore={loadMore}
+					isLoadingMore={isLoadingMore}
+					hasMore={hasMore}
 				/>
 			</div>
 

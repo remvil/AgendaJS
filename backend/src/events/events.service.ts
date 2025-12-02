@@ -1,7 +1,9 @@
 import {Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
+import {Model, Types} from "mongoose";
 import {Event} from "./schemas/event.schema";
+import {CreateEventDto} from "./dto/create-event.dto";
+import {UpdateEventDto} from "./dto/update-event.dto";
 
 interface FindAllOptions {
 	startDate?: string;
@@ -23,6 +25,15 @@ export interface FindAllResult {
 @Injectable()
 export class EventsService {
 	constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
+
+	private mapDto(dto: CreateEventDto | UpdateEventDto): any {
+		const data: any = {...dto};
+		if (data.processId && typeof data.processId === "string") {
+			data.processId = new Types.ObjectId(data.processId);
+		}
+
+		return data;
+	}
 
 	async findAll(options: FindAllOptions = {}): Promise<FindAllResult> {
 		const {startDate, endDate, type, company, page = 1, limit = 10} = options;
@@ -56,13 +67,17 @@ export class EventsService {
 		};
 	}
 
-	async create(eventData: Partial<Event>): Promise<Event> {
-		const event = new this.eventModel(eventData);
+	async create(eventData: CreateEventDto): Promise<Event> {
+		const mapped = this.mapDto(eventData);
+
+		const event = new this.eventModel(mapped);
 		return event.save();
 	}
 
-	async update(id: string, eventData: Partial<Event>): Promise<Event> {
-		return this.eventModel.findByIdAndUpdate(id, eventData, {new: true}).exec();
+	async update(id: string, eventData: UpdateEventDto): Promise<Event> {
+		const mapped = this.mapDto(eventData);
+
+		return this.eventModel.findByIdAndUpdate(id, mapped, {new: true}).exec();
 	}
 
 	async delete(id: string): Promise<Event> {

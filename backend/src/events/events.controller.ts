@@ -1,6 +1,7 @@
+import {UpdateEventDto} from "./dto/update-event.dto";
+import {CreateEventDto} from "./dto/create-event.dto";
 import {Controller, Get, Post, Put, Delete, Body, Param, Query} from "@nestjs/common";
 import {EventsService, FindAllResult} from "./events.service";
-import {EventDto} from "./dto";
 import {ApiTags, ApiResponse, ApiBody, ApiQuery} from "@nestjs/swagger";
 
 @ApiTags("events")
@@ -35,16 +36,16 @@ export class EventsController {
 	}
 
 	@Post()
-	@ApiBody({type: EventDto})
+	@ApiBody({type: CreateEventDto})
 	@ApiResponse({status: 201, description: "Event created"})
-	create(@Body() eventData: EventDto) {
+	create(@Body() eventData: CreateEventDto) {
 		return this.eventsService.create(eventData);
 	}
 
 	@Put(":id")
-	@ApiBody({type: EventDto})
+	@ApiBody({type: UpdateEventDto})
 	@ApiResponse({status: 200, description: "Event updated"})
-	update(@Param("id") id: string, @Body() eventData: EventDto) {
+	update(@Param("id") id: string, @Body() eventData: UpdateEventDto) {
 		return this.eventsService.update(id, eventData);
 	}
 

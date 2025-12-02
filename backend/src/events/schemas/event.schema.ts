@@ -1,5 +1,6 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import {Document} from "mongoose";
+import * as mongoose from "mongoose";
 
 @Schema({timestamps: true})
 export class Event extends Document {
@@ -26,6 +27,9 @@ export class Event extends Document {
 
 	@Prop({default: ""})
 	notes: string;
+
+	@Prop({type: mongoose.Schema.Types.ObjectId, ref: "Process", required: false})
+	processId?: mongoose.Types.ObjectId;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

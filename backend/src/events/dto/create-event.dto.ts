@@ -41,4 +41,9 @@ export class CreateEventDto {
 	@IsString()
 	@IsOptional()
 	notes?: string;
+
+	@ApiProperty({example: "64b7e4c9a6f3f2b1c0d4e5f6", description: "Optional process id to link this event to", required: false})
+	@IsString()
+	@IsOptional()
+	processId?: string;
 }

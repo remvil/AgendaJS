@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header, EventList, EventModal, ConfirmModal, FilterBar } from './components';
+import CalendarPage from './pages/CalendarPage';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 const API_URL = `${API_BASE}/events`;
@@ -15,6 +16,7 @@ const emptyEvent = {
 };
 
 function App() {
+	const [currentView, setCurrentView] = useState('list'); // 'list' or 'calendar'
 	const [events, setEvents] = useState([]);
 	const [companies, setCompanies] = useState([]);
 	const [filters, setFilters] = useState({ startDate: '', endDate: '', type: 'all', company: '' });
@@ -202,17 +204,24 @@ function App() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
 			<div className="max-w-4xl mx-auto">
-				<Header onNewEvent={openNewEventDialog} />
-				<FilterBar filters={filters} onChange={setFilters} companies={companies} />
-				<EventList
-					events={events}
-					onEdit={openEditDialog}
-					onDelete={deleteEvent}
-					onRequestDelete={requestDelete}
-					onLoadMore={loadMore}
-					isLoadingMore={isLoadingMore}
-					hasMore={hasMore}
-				/>
+				<Header onNewEvent={openNewEventDialog} currentView={currentView} onViewChange={setCurrentView} />
+
+				{currentView === 'calendar' ? (
+					<CalendarPage />
+				) : (
+					<>
+						<FilterBar filters={filters} onChange={setFilters} companies={companies} />
+						<EventList
+							events={events}
+							onEdit={openEditDialog}
+							onDelete={deleteEvent}
+							onRequestDelete={requestDelete}
+							onLoadMore={loadMore}
+							isLoadingMore={isLoadingMore}
+							hasMore={hasMore}
+						/>
+					</>
+				)}
 			</div>
 
 			<EventModal
